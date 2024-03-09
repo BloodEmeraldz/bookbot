@@ -11,20 +11,34 @@ def count_words(file_contents):
     word_count = len(word_list)
     return word_count
 
+def sort_on(dictionary):
+    return dictionary["count"]
+
 def count_characters(book_text):
     book_text = book_text.lower()
     character_count = {}
     for char in book_text:
         if char.isalpha():
             character_count[char] = character_count.get(char, 0) + 1
-    return character_count
+
+    # Convert the dictionary into a list of dictionaries
+    character_list = [{"char": char, "count": count} for char, count in character_count.items()]
+
+    # Sort the list of dictionaries by the "count" key
+    character_list.sort(reverse=True, key=sort_on)
+
+    return character_list
 
 def main():
     try:
         with open("books/frankenstein.txt") as f:
             file_contents = f.read()
-        print("The number of words in the book is:", count_words(file_contents))
-        print("Character count:", count_characters(file_contents))
+        print("--- Begin report of books/frankenstein.txt ---")
+        print("The number of words in the document is", count_words(file_contents))
+        character_list = count_characters(file_contents)
+        for character in character_list:
+            print(f"The '{character['char']}' character was found {character['count']} times.")
+        print("--- End report ---")
     except FileNotFoundError:
         print("Error: File not found.")
     except IOError:
